@@ -1,3 +1,7 @@
+/**
+ * Author : Bharat Singh, CS08B025 (bharatsingh430@gmail.com)
+ */
+
 #include "address.h"
 
 Address::Address (int set, int index, int offset) {

@@ -1,3 +1,7 @@
+/**
+ * Author : Bharat Singh, CS08B025 (bharatsingh430@gmail.com)
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
