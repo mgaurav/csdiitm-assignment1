@@ -1,25 +1,29 @@
+/**
+ * Author : Gaurav Maheshwari, CS08B005 (gaurav.m.iitm@gmail.com)
+ */
+
 #include "cache.h"
 #include "address.h"
 
-Cache::Cache (int associativity, int blockSizeInBytes, int cacheSizeInBytes, int dataSizeInBytes) {
+Cache::Cache (int associativity, int blockSizeInBytes, int cacheSizeInBytes) {
   this->associativity = associativity;
   this->blockSizeInBytes = blockSizeInBytes;
   this->cacheSizeInBytes = cacheSizeInBytes;
-  this->dataSizeInBytes = dataSizeInBytes;
 
   numRowsInCache = cacheSizeInBytes / (associativity * blockSizeInBytes);
-  cache = new LRUQueue[numRowsInCache];
+  cache.reserve(sizeof(LRUQueue) * numRowsInCache);
+  for (int i = 0; i < numRowsInCache; i++) {
+    cache.push_back(LRUQueue(associativity));
+  }
 
   numColdMiss = 0;
   numMisses = 0;
   numHits = 0;
 }
 
-/*int Cache::getTagFromLinearAddress (int linearAddress) {
-  int numDataElementsInABlock = blockSizeInBytes / dataSizeInBytes;
-  return (linearAddress % (numDataElementsInABlock * numRowsInCache))/numDataElementsInABlock;
-  }*/
-
+/**
+ * Returns true if a Cold Miss has occured, otherwise false.
+ */
 bool Cache::isColdMiss (Address address) {
   vector<Address>::iterator iterator;
   for (iterator = addressLog.begin(); iterator != addressLog.end(); iterator++) {
@@ -31,8 +35,11 @@ bool Cache::isColdMiss (Address address) {
   return true;
 }
 
+/**
+ * Updates cache appropriately when an access to 'address' occurs.
+ * Updates Hit count, Miss count, Cold Miss count appropriately.
+ */
 void Cache::updateCache (Address address) {
-   // int tag = getTagFromLinearAddress(linearAddress);
   if (isColdMiss(address)) {
     numColdMiss++;
     addressLog.push_back(address);

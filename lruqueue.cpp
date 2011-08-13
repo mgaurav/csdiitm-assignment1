@@ -1,3 +1,7 @@
+/**
+ * Author : Bharat Singh, CS08B025 (bharatsingh430@gmail.com)
+ */
+
 #include "lruqueue.h"
 #include "stdio.h"
 
@@ -5,8 +9,12 @@ LRUQueue::LRUQueue (int ways) {
   this->ways = ways;
 }
 
+/**
+ * Updates queue of addresses appropriately according to
+ * LRU Replacement policy.
+ * Return true if a Hit occurs, otherwise returns false.
+ */
 bool LRUQueue::updateLRUQueue (Address address) {
-  printf("Length of queue %d\n", lruQueue.size());
   if (lruQueue.size() == 0) {
     lruQueue.push_back(address);
     return false;
