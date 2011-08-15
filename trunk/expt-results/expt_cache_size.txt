@@ -1,4 +1,4 @@
-#Cache-size Hit-rate
+Cache-size Hit-rate
 128 0.5825
 256 0.5825
 512 0.5825

@@ -1,4 +1,4 @@
-#Block-size Hit-rate
+Block-size Hit-rate
 4 0.658827
 8 0.799231
 16 0.866486
