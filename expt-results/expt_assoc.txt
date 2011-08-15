@@ -1,4 +1,4 @@
-#Associativity Hit-rate
+Associativity Hit-rate
 1 0.785507
 2 0.797622
 4 0.866486
