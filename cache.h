@@ -10,6 +10,7 @@
 #include "address.h"
 #include "lruqueue.h"
 
+#include <set>
 #include <vector>
 
 using namespace std;
@@ -22,13 +23,11 @@ class Cache
   int numRowsInCache;
   
   vector<LRUQueue> cache;
-  vector<Address> addressLog;
+  set<pair<int, int> > addressLog;
 
   int numColdMiss;
   int numMisses;
   int numHits;
-
-  bool isColdMiss (Address address);
 
  public:
   Cache (int associativity, int blockSizeInBytes, int cacheSizeInBytes);

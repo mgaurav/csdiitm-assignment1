@@ -202,13 +202,19 @@ int main (int argc, char* argv[]) {
   int s = atoi(argv[6]);
  
   Cache cache(associativity, blockSizeInBytes, cacheSizeInBytes);
+  Cache fullyAssociativeCache(cacheSizeInBytes/blockSizeInBytes,
+      blockSizeInBytes, cacheSizeInBytes);
   cacheAwareMatrixMultiplication(cache, dataSizeInBytes,  n, s);
+  cacheAwareMatrixMultiplication(fullyAssociativeCache, dataSizeInBytes,  n, s);
 
-  cout << "Cache Statistics:\n"
-       << "Hits        : " << cache.getNumHits() << "\n"
-       << "Misses      : " << cache.getNumMisses() << "\n"
-       << "Cold Misses : " << cache.getNumColdMiss() << "\n";
+  int numHits, numMisses, numColdMisses, numCapacityMisses, numConflictMisses;
+  numHits = cache.getNumHits();
+  numMisses = cache.getNumMisses();
+  numColdMisses = cache.getNumColdMiss();
+  numCapacityMisses = fullyAssociativeCache.getNumMisses() - numColdMisses;
+  numConflictMisses = numMisses - numColdMisses - numCapacityMisses;
 
+  cout << ((float) numHits) / (numHits + numMisses) << "\n";
   return 0;
 }
 

@@ -83,7 +83,8 @@ int main (int argc, char* argv[]) {
   
   if (argc != 8) {
     cout << "Usage: ./exe <cache-associativity> <cache-block-size-in-bytes>"
-	 << " <cache-size-in-bytes> <data-element-size-in-bytes> <m> <n> <p>\n";
+	 << " <cache-size-in-bytes> <data-element-size-in-bytes>"
+	 << "<m> <n> <p>\n";
     exit(1);
   }
 
@@ -97,12 +98,18 @@ int main (int argc, char* argv[]) {
   int p = atoi(argv[7]);
   
   Cache cache(associativity, blockSizeInBytes, cacheSizeInBytes);
+  Cache fullyAssociativeCache(cacheSizeInBytes/blockSizeInBytes,
+      blockSizeInBytes, cacheSizeInBytes);
   matrixMultiplication(cache, dataSizeInBytes, m, n, p);
+  matrixMultiplication(fullyAssociativeCache, dataSizeInBytes, m, n, p);
 
-  cout << "Cache Statistics:\n"
-       << "Hits        : " << cache.getNumHits() << "\n"
-       << "Misses      : " << cache.getNumMisses() << "\n"
-       << "Cold Misses : " << cache.getNumColdMiss() << "\n";
+  int numHits, numMisses, numColdMisses, numCapacityMisses, numConflictMisses;
+  numHits = cache.getNumHits();
+  numMisses = cache.getNumMisses();
+  numColdMisses = cache.getNumColdMiss();
+  numCapacityMisses = fullyAssociativeCache.getNumMisses() - numColdMisses;
+  numConflictMisses = numMisses - numColdMisses - numCapacityMisses;
 
+  cout << ((float) numHits) / (numHits + numMisses) << "\n";
   return 0;
 }
