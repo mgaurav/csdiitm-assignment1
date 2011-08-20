@@ -7,6 +7,7 @@
 #include "address.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 #include <iostream>
 #include <math.h>
@@ -124,15 +125,46 @@ void cacheAwareMatrixMultiplication1 (Cache& cache, int dataSize, int n, int s) 
   int x, y, z;
 
   // generate a matrix of specified size
-  int** matrix1 = (int**)malloc(sizeof(int*)*n);
+  int matrix1[n][n];
   Address* copied_address1[n][n];
-  int** matrix2 = (int**)malloc(sizeof(int*)*n);
+  int matrix2[n][n];
   Address* copied_address2[n][n];
-  int** matrix3 = (int**)malloc(sizeof(int*)*n);
+  int matrix3[n][n];
   Address* copied_address3[n][n];
   int linearAddress = 0;
 
   // code to fill copied_address1,2,3 according to your scheme
+  for (i=0; i < n/s; i++) {
+    for (j = 0; j < n/s; j++) {
+      //assign linear address of the (i,j)th block in matrix 1, matrix2 and matrix3
+      for (k = 0; k<s; k++) {
+	for (l = 0; l<s; l++) {
+	  copied_address1[i*s+k][j*s+l] = getAddress(linearAddress, cache.getAssociativity(),
+	      cache.getBlockSize(), cache.getCacheSize(), dataSize);
+	  matrix1[k][l] = rand() % MAX;
+	  linearAddress++;
+	}
+      }
+
+      for (k = 0; k<s; k++) {
+	for (l = 0; l<s; l++) {
+	  copied_address2[i*s+k][j*s+l] = getAddress(linearAddress, cache.getAssociativity(),
+	      cache.getBlockSize(), cache.getCacheSize(), dataSize);
+	  matrix2[k][l] = rand() % MAX;
+	  linearAddress++;
+	}
+      }
+
+      for (k = 0; k<s; k++) {
+	for (l = 0; l<s; l++) {
+	  copied_address3[i*s+k][j*s+l] = getAddress(linearAddress, cache.getAssociativity(),
+	      cache.getBlockSize(), cache.getCacheSize(), dataSize);
+	  matrix3[k][l] = rand() % MAX;
+	  linearAddress++;
+	}
+      }
+    }
+  }
 
   // perform matrix multiplication using tile by tile multiplication
   for (i = 0; i < n/s; i++) {
@@ -177,6 +209,7 @@ int main (int argc, char* argv[]) {
 				blockSizeInBytes, cacheSizeInBytes);
   
   if (rows_in_cache < 3) {
+    printf("I am here \n");
     int s = sqrt(cacheSizeInBytes / (3 * dataSizeInBytes));
     cacheAwareMatrixMultiplication(cache, dataSizeInBytes,  n, s);
     cacheAwareMatrixMultiplication(fullyAssociativeCache, dataSizeInBytes,  n, s);
@@ -188,18 +221,17 @@ int main (int argc, char* argv[]) {
       i--;
     }
     s = i;
-
     cacheAwareMatrixMultiplication1(cache, dataSizeInBytes,  n, s);
     cacheAwareMatrixMultiplication(fullyAssociativeCache, dataSizeInBytes,  n, s);
   }
-
+  printf("I am here \n");
   int numHits, numMisses, numColdMisses, numCapacityMisses, numConflictMisses;
   numHits = cache.getNumHits();
   numMisses = cache.getNumMisses();
   numColdMisses = cache.getNumColdMiss();
   numCapacityMisses = fullyAssociativeCache.getNumMisses() - numColdMisses;
   numConflictMisses = numMisses - numColdMisses - numCapacityMisses;
-
+  printf("I am here %d %d\n", numHits, numMisses);
   cout << ((float) numHits) / (numHits + numMisses) << "\n";
   return 0;
 }
