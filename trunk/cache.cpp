@@ -21,28 +21,16 @@ Cache::Cache (int associativity, int blockSizeInBytes, int cacheSizeInBytes) {
   numHits = 0;
 }
 
-/**
- * Returns true if a Cold Miss has occured, otherwise false.
- */
-bool Cache::isColdMiss (Address address) {
-  vector<Address>::iterator iterator;
-  for (iterator = addressLog.begin(); iterator != addressLog.end(); iterator++) {
-    if (iterator->getSet() == address.getSet() &&
-	iterator->getIndex() == address.getIndex()) {
-      return false;
-    }
-  }
-  return true;
-}
 
 /**
  * Updates cache appropriately when an access to 'address' occurs.
  * Updates Hit count, Miss count, Cold Miss count appropriately.
  */
 void Cache::updateCache (Address address) {
-  if (isColdMiss(address)) {
+  if (addressLog.find(make_pair(address.getSet(), address.getIndex()))
+      == addressLog.end()) {
+    addressLog.insert(make_pair(address.getSet(), address.getIndex()));
     numColdMiss++;
-    addressLog.push_back(address);
   }
 
   bool status = cache[address.getSet()].updateLRUQueue(address);
