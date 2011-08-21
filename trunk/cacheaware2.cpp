@@ -192,7 +192,7 @@ int main (int argc, char* argv[]) {
   
   if (argc != 6) {
     cout << "Usage: ./exe <cache-associativity> <cache-block-size-in-bytes>"
-	 << " <cache-size-in-bytes> <data-element-size-in-bytes> <n> \n";
+	 << " <cache-size-in-bytes> <data-element-size-in-bytes> <n>\n";
     exit(1);
   }
 
@@ -202,6 +202,7 @@ int main (int argc, char* argv[]) {
   int dataSizeInBytes = atoi(argv[4]);
 
   int n = atoi(argv[5]); //size of matrix
+
   int rows_in_cache = cacheSizeInBytes /(blockSizeInBytes*associativity);
   
   Cache cache(associativity, blockSizeInBytes, cacheSizeInBytes);
@@ -209,8 +210,10 @@ int main (int argc, char* argv[]) {
 				blockSizeInBytes, cacheSizeInBytes);
   
   if (rows_in_cache < 3) {
-    printf("I am here \n");
+    // s : matrix partition will be of size s x s
     int s = sqrt(cacheSizeInBytes / (3 * dataSizeInBytes));
+    if (s > n)
+      s = n;
     cacheAwareMatrixMultiplication(cache, dataSizeInBytes,  n, s);
     cacheAwareMatrixMultiplication(fullyAssociativeCache, dataSizeInBytes,  n, s);
   } else {
@@ -224,14 +227,17 @@ int main (int argc, char* argv[]) {
     cacheAwareMatrixMultiplication1(cache, dataSizeInBytes,  n, s);
     cacheAwareMatrixMultiplication(fullyAssociativeCache, dataSizeInBytes,  n, s);
   }
-  printf("I am here \n");
+
   int numHits, numMisses, numColdMisses, numCapacityMisses, numConflictMisses;
   numHits = cache.getNumHits();
   numMisses = cache.getNumMisses();
   numColdMisses = cache.getNumColdMiss();
   numCapacityMisses = fullyAssociativeCache.getNumMisses() - numColdMisses;
   numConflictMisses = numMisses - numColdMisses - numCapacityMisses;
-  printf("I am here %d %d\n", numHits, numMisses);
-  cout << ((float) numHits) / (numHits + numMisses) << "\n";
+  if (numConflictMisses < 0)
+    numConflictMisses = 0;
+
+  cout << ((float) numHits) / (numHits + numMisses) << ' '
+       << numColdMisses << ' ' << numCapacityMisses << ' ' << numConflictMisses << "\n";
   return 0;
 }
