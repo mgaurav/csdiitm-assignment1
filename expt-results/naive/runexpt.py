@@ -10,7 +10,8 @@ data_size = 4
 matrix_size = 100
 
 # Experiment : Vary Associativity, keep all other parameters fixed
-os.system('echo "Associativity Hit-rate" >> expt_assoc.txt')
+os.system('rm -f expt_assoc.txt')
+os.system('echo "Associativity Hit-rate Cold-Miss Capacity-Miss Conflict-Miss" >> expt_assoc.txt')
 j = 1
 while j <= 32:
     os.system('echo "' + str(j) + ' " >> expt_assoc.txt')
@@ -23,37 +24,41 @@ while j <= 32:
 j = 128
 os.system('echo "' + str(j) + ' " >> expt_assoc.txt')
 os.system('./a.out ' + str(j) + ' ' + str(block_size) + ' ' +
-              str(cache_size) + ' ' + str(data_size) + ' ' +
-              str(matrix_size) + ' ' + str(matrix_size) + ' ' +
-              str(matrix_size) + ' >> expt_assoc.txt')
+          str(cache_size) + ' ' + str(data_size) + ' ' +
+          str(matrix_size) + ' ' + str(matrix_size) + ' ' +
+          str(matrix_size) + ' >> expt_assoc.txt')
+
 os.system('echo "expt-1 completed"')
 
 # Experiment : Vary Cache size, keep all other parameters fixed
-os.system('echo "Cache-size Hit-rate" >> expt_cache_size.txt')
+os.system('rm -f expt_cache_size.txt')
+os.system('echo "Cache-size Hit-rate Cold-Miss Capacity-Miss Conflict-Miss" >> expt_cache_size.txt')
 j = 128
 while j <= 16384:
-    os.system('echo "' + str(j) + ' " >> expt_cache_size.txt')    
+    os.system('echo "' + str(j) + ' " >> expt_cache_size.txt') 
     os.system('./a.out ' + str(associativity) + ' ' + str(block_size) + ' ' +
               str(j) + ' ' + str(data_size) + ' ' +
               str(matrix_size) + ' ' + str(matrix_size) + ' ' +
-              str(matrix_size) + ' >> expt_cache_size.txt')
+              str(matrix_size) + ' >> expt_cache_size.txt')    
     j *= 2
 os.system('echo "expt-2 completed"')
-
+    
 # Experiment : Vary Block size, keep all other parameters fixed
-os.system('echo "Block-size Hit-rate" >> expt_block_size.txt')
+os.system('rm -f expt_block_size.txt')
+os.system('echo "Block-size Hit-rate Cold-Miss Capacity-Miss Conflict-Miss" >> expt_block_size.txt')
 j = 4
 while j <= 128:
     os.system('echo "' + str(j) + ' " >> expt_block_size.txt')
     os.system('./a.out ' + str(associativity) + ' ' + str(j) + ' ' +
               str(cache_size) + ' ' + str(data_size) + ' ' +
               str(matrix_size) + ' ' + str(matrix_size) + ' ' +
-              str(matrix_size) + ' >> expt_block_size.txt')
+              str(matrix_size) + ' >> expt_block_size.txt')    
     j *= 2
 os.system('echo "expt-3 completed"')
 
 # Experiment : Vary Matrix size, keep all other parameters fixed
-os.system('echo "Matrix Hit-rate" >> expt_matrix_size.txt')
+os.system('rm -f expt_matrix_size.txt')
+os.system('echo "Matrix-size Hit-rate Cold-Miss Capacity-Miss Conflict-Miss" >> expt_matrix_size.txt')
 j = 10
 while j <= 100:
     os.system('echo "' + str(j) + ' " >> expt_matrix_size.txt')

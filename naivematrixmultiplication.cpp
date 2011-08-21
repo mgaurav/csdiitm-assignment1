@@ -96,7 +96,7 @@ int main (int argc, char* argv[]) {
   int m = atoi(argv[5]);
   int n = atoi(argv[6]);
   int p = atoi(argv[7]);
-  
+
   Cache cache(associativity, blockSizeInBytes, cacheSizeInBytes);
   Cache fullyAssociativeCache(cacheSizeInBytes/blockSizeInBytes,
       blockSizeInBytes, cacheSizeInBytes);
@@ -109,7 +109,11 @@ int main (int argc, char* argv[]) {
   numColdMisses = cache.getNumColdMiss();
   numCapacityMisses = fullyAssociativeCache.getNumMisses() - numColdMisses;
   numConflictMisses = numMisses - numColdMisses - numCapacityMisses;
+  if (numConflictMisses < 0)
+    numConflictMisses = 0;
 
-  cout << ((float) numHits) / (numHits + numMisses) << "\n";
+  cout << ((float) numHits) / (numHits + numMisses) << ' '
+       << numColdMisses << ' ' << numCapacityMisses << ' ' << numConflictMisses << "\n";
+
   return 0;
 }
